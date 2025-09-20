@@ -28,13 +28,16 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "gunicorn app:app --bind=0.0.0.0:5000 --workers=2 --threads=2 --worker-class=gthread --log-level=info"
+args = "python main.py"
 waitForPort = 5000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
-exposeLocalhost = true
+
+[[ports]]
+localPort = 35879
+externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
