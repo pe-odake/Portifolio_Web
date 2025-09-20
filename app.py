@@ -21,30 +21,33 @@ if not os.environ.get("SESSION_SECRET"):
     raise SystemExit("SESSION_SECRET environment variable must be set for secure sessions")
 
 app.secret_key = os.environ.get("SESSION_SECRET")
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1) # needed for url_for to generate with https
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # needed for url_for to generate with https
 
 # Security configurations
-app.config['SESSION_COOKIE_SECURE'] = True  # HTTPS only
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
-app.config['SESSION_COOKIE_HTTPONLY'] = True  # XSS protection
+# For local development, allow insecure cookies
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get("FLASK_ENV") == "production"  # HTTPS only in production
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 # CSRF Protection
 from flask_wtf.csrf import CSRFProtect
 csrf = CSRFProtect(app)
 
-# Database configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+# Database configuration: fallback to SQLite if DATABASE_URL not set
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///site.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     'pool_pre_ping': True,
     "pool_recycle": 300,
 }
 
-# No need to call db.init_app(app) here, it's already done in the constructor.
 db = SQLAlchemy(app)
 
 # Upload configuration
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static/uploads')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
@@ -59,7 +62,6 @@ def init_database():
     db.create_all()
     logging.info("Database tables created")
     
-    # Seed initial data only if tables are empty
     try:
         # Seed categories
         if Category.query.count() == 0:
@@ -71,8 +73,7 @@ def init_database():
                 Category(name='API Development', color='#6f42c1'),
                 Category(name='Machine Learning', color='#17a2b8')
             ]
-            for category in categories:
-                db.session.add(category)
+            db.session.add_all(categories)
             logging.info("Categories seeded")
         
         # Seed tags
@@ -83,8 +84,7 @@ def init_database():
                 'Backend', 'Full-Stack', 'Mobile', 'iOS', 'Android',
                 'UI/UX', 'Machine Learning', 'Data Analysis'
             ]
-            for tag_name in tag_names:
-                db.session.add(Tag(name=tag_name))
+            db.session.add_all([Tag(name=name) for name in tag_names])
             logging.info("Tags seeded")
         
         # Seed about page
@@ -109,7 +109,8 @@ def init_database():
         db.session.rollback()
         logging.error(f"Error seeding initial data: {e}")
 
-# Create tables and seed data
-# Need to put this in module-level to make it work with Gunicorn.
-with app.app_context():
-    init_database()
+# Only initialize database if running this script directly
+if __name__ == "__main__":
+    with app.app_context():
+        init_database()
+    app.run(debug=True)
