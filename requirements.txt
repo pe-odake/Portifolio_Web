@@ -12,3 +12,17 @@ flask-dance
 flask-login
 oauthlib
 pyjwt
+Flask==2.3.3
+flask-dance
+Flask-Login==0.6.3
+Flask-SQLAlchemy==3.0.5
+Flask-WTF==1.1.1
+oauthlib
+Pillow==10.0.1
+psycopg2-binary==2.9.7
+pyjwt
+python-dotenv==1.0.0
+requests==2.31.0
+sqlalchemy
+Werkzeug==2.3.7
+WTForms==3.0.1
