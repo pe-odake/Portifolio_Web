@@ -84,3 +84,12 @@ Thumbs.db
 
 # Uploads
 uploads/
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Python libs
+.pythonlibs/
+
+# Logs and temp files
+*.log
+/tmp/

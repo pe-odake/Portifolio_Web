@@ -21,6 +21,7 @@
 </div>
 
 <form method="POST" enctype="multipart/form-data" action="{{ url_for('admin_save_project') }}" class="needs-validation" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {% if project %}
     <input type="hidden" name="project_id" value="{{ project.id }}">
     {% endif %}

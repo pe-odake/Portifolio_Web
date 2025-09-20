@@ -148,13 +148,20 @@ def make_replit_blueprint():
     return replit_bp
 
 
-def save_user(user_info):
+def save_user(user_claims):
     user = User()
-    user.id = user_info['sub']
-    user.email = user_info.get('email')
-    user.first_name = user_info.get('first_name')
-    user.last_name = user_info.get('last_name')
-    user.profile_image_url = user_info.get('profile_image_url')
+    user.id = user_claims['sub']
+    user.email = user_claims.get('email')
+    user.first_name = user_claims.get('first_name')
+    user.last_name = user_claims.get('last_name')
+    user.profile_image_url = user_claims.get('profile_image_url')
+    
+    # Check if this is the first user - if so, make them admin and owner
+    existing_users_count = User.query.count()
+    if existing_users_count == 0:
+        user.is_admin = True
+        user.is_owner = True
+    
     merged_user = db.session.merge(user)
     db.session.commit()
     return merged_user
@@ -162,34 +169,37 @@ def save_user(user_info):
 
 @oauth_authorized.connect
 def logged_in(blueprint, token):
-    # Use OAuth session to get user info securely instead of decoding unverified JWT
+    # Use userinfo endpoint for secure user data retrieval
     issuer_url = os.environ.get('ISSUER_URL', "https://replit.com/oidc")
     userinfo_url = issuer_url + "/userinfo"
     
-    resp = blueprint.session.get(userinfo_url)
-    if not resp.ok:
-        return redirect(url_for('replit_auth.error'))
-    
-    user_info = resp.json()
-    user = save_user(user_info)
-    login_user(user)
-    
-    # Update the OAuth record with the real user_id now that we're logged in
     try:
-        oauth_record = db.session.query(OAuth).filter_by(
-            browser_session_key=g.browser_session_key,
-            provider=blueprint.name,
-        ).first()
-        if oauth_record:
-            oauth_record.user_id = user.id
-            db.session.commit()
+        resp = blueprint.session.get(userinfo_url)
+        if not resp.ok:
+            return redirect(url_for('replit_auth.error'))
+        
+        user_claims = resp.json()
+        user = save_user(user_claims)
+        login_user(user)
+        
+        # Update the OAuth record with the real user_id now that we're logged in
+        try:
+            oauth_record = db.session.query(OAuth).filter_by(
+                browser_session_key=g.browser_session_key,
+                provider=blueprint.name,
+            ).first()
+            if oauth_record:
+                oauth_record.user_id = user.id
+                db.session.commit()
+        except Exception:
+            db.session.rollback()
+        
+        blueprint.token = token
+        next_url = session.pop("next_url", None)
+        if next_url is not None:
+            return redirect(next_url)
     except Exception:
-        db.session.rollback()
-    
-    blueprint.token = token
-    next_url = session.pop("next_url", None)
-    if next_url is not None:
-        return redirect(next_url)
+        return redirect(url_for('replit_auth.error'))
 
 
 @oauth_error.connect
@@ -201,12 +211,6 @@ def require_login(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
-            session["next_url"] = get_next_navigation_url(request)
-            return redirect(url_for('replit_auth.login'))
-
-        # Let Flask-Dance handle token refresh automatically
-        # No need for custom refresh logic as it's configured in the blueprint
-        if not replit.authorized:
             session["next_url"] = get_next_navigation_url(request)
             return redirect(url_for('replit_auth.login'))
 

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Erro Interno - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="error-page">
+                <h1 class="display-1 text-danger">500</h1>
+                <h2 class="mb-4">Erro Interno do Servidor</h2>
+                <p class="lead mb-4">
+                    Ops! Algo deu errado em nosso servidor. 
+                    Nossa equipe foi notificada e está trabalhando para resolver o problema.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Ir para o Início
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 2rem;
+}
+
+.error-page h1 {
+    font-size: 8rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.error-page h2 {
+    color: #333;
+    font-weight: 600;
+}
+</style>
+{% endblock %}

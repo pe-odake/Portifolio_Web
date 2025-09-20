@@ -23,22 +23,18 @@ args = "Portfolio Server"
 name = "Portfolio Server"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python main.py"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "gunicorn app:app --bind=0.0.0.0:5000 --workers=2 --threads=2 --worker-class=gthread --log-level=info"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 46613
-externalPort = 3000
-
 [deployment]
 deploymentTarget = "autoscale"
-run = ["python", "main.py"]
+run = ["gunicorn", "--bind=0.0.0.0:5000", "--workers=2", "--threads=2", "--worker-class=gthread", "main:app"]

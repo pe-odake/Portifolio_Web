@@ -31,10 +31,14 @@ function setupLikeButtons() {
             // Add loading state
             this.classList.add('loading');
             
+            // Get CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
             fetch(`/like/${projectId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
                 }
             })
             .then(response => response.json())
