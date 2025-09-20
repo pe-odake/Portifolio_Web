@@ -1,0 +1,93 @@
+Enunciado do Projeto – Portfólio Digital Interativo com IA
+Desenvolver um sistema web de portfólio digital que permita ao usuário principal (proprietário do portfólio) cadastrar e gerenciar suas conquistas, projetos e experiências, apresentando-os de forma organizada e atrativa.
+O sistema deverá contar com recursos para visitantes interagirem, podendo curtir, comentar e compartilhar publicações diretamente no LinkedIn.
+Além disso, será implementada uma área de login para visitantes, permitindo que usuários registrados participem ativamente deixando comentários e feedbacks nos projetos.
+O desenvolvimento deverá ser realizado utilizando a Inteligência Artificial do Replit (Replit AI/Ghostwriter) para gerar, refinar e corrigir o código, além de outras IAs auxiliares (como ChatGPT, Copilot, Gemini, etc.) para apoio no design, organização e documentação do projeto.
+________________________________________
+Requisitos Mínimos
+1.	Área Administrativa (Proprietário do Portfólio)
+
+
+o	Cadastro, edição e exclusão de conquistas e projetos.
+
+
+o	Upload de imagens, vídeos ou links de demonstração.
+
+
+o	Organização por categorias ou tags.
+
+
+o	Opção para publicar ou deixar como rascunho.
+
+
+2.	Área Pública (Visitantes)
+
+
+o	Visualização dos projetos e conquistas.
+
+
+o	Botão de curtir e contador de curtidas.
+
+
+o	Campo para comentários (apenas para usuários logados).
+
+
+o	Botão para compartilhar no LinkedIn com prévia personalizada.
+
+
+3.	Área de Autenticação
+
+
+o	Cadastro e login de visitantes (nome, e-mail e senha).
+
+
+o	Recuperação de senha.
+
+
+o	Perfis com foto e informações básicas.
+
+
+4.	Funcionalidades Extras
+
+
+o	Sistema de notificação para o proprietário quando um comentário é feito.
+
+
+o	Seção “Sobre Mim” para apresentação pessoal.
+
+
+o	Página inicial com destaques (últimos ou mais curtidos projetos).
+
+
+________________________________________
+Regras de Desenvolvimento
+•	O código base deverá ser gerado com auxílio da IA do Replit.
+
+
+•	Ajustes e personalizações poderão ser feitos com apoio de outras IAs.
+
+
+•	Todo o processo de criação (prompt usado, código gerado, ajustes manuais) deverá ser documentado.
+
+
+•	Interface responsiva, funcionando em desktop e dispositivos móveis.
+
+
+________________________________________
+Tecnologias Sugeridas
+•	Frontend: HTML, CSS, JavaScript (React ou Next.js para mais dinamismo).
+
+
+•	Backend: Python com Flask/Django.
+
+
+•	Banco de Dados: o mais fácil possível para o deploy
+
+
+•	Integrações: API do LinkedIn para compartilhamento.
+
+
+________________________________________
+Objetivo
+Criar um sistema que funcione como vitrine digital profissional, mas que também tenha recursos sociais para engajar visitantes, aproximando o portfólio de uma rede interativa — usando Inteligência Artificial como ferramenta ativa de desenvolvimento.
+
