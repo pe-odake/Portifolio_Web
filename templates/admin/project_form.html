@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}{% if project %}Editar{% else %}Novo{% endif %} Projeto - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="fas fa-{% if project %}edit{% else %}plus{% endif %}"></i> 
+        {% if project %}Editar Projeto{% else %}Novo Projeto{% endif %}
+    </h1>
+    <div>
+        <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        {% if project and project.status.value == 'published' %}
+        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline-primary">
+            <i class="fas fa-eye"></i> Ver Projeto
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('admin_save_project') }}" class="needs-validation" novalidate>
+    {% if project %}
+    <input type="hidden" name="project_id" value="{{ project.id }}">
+    {% endif %}
+    
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informações Básicas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título *</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{ project.title if project else '' }}" required>
+                        <div class="invalid-feedback">
+                            Por favor, forneça um título para o projeto.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descrição Curta</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" 
+                                  placeholder="Uma breve descrição do projeto">{{ project.description if project else '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Conteúdo Completo</label>
+                        <textarea class="form-control" id="content" name="content" rows="10" 
+                                  placeholder="Descrição detalhada do projeto (aceita HTML)">{{ project.content if project else '' }}</textarea>
+                        <div class="form-text">Você pode usar HTML básico para formatação.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-link"></i> Links do Projeto</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="github_url" class="form-label">URL do GitHub</label>
+                        <input type="url" class="form-control" id="github_url" name="github_url" 
+                               value="{{ project.github_url if project else '' }}" 
+                               placeholder="https://github.com/usuario/projeto">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="demo_url" class="form-label">URL da Demo</label>
+                        <input type="url" class="form-control" id="demo_url" name="demo_url" 
+                               value="{{ project.demo_url if project else '' }}" 
+                               placeholder="https://projeto.demo.com">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-cog"></i> Configurações</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="draft" {% if not project or project.status.value == 'draft' %}selected{% endif %}>
+                                Rascunho
+                            </option>
+                            <option value="published" {% if project and project.status.value == 'published' %}selected{% endif %}>
+                                Publicado
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" 
+                                   {% if project and project.is_featured %}checked{% endif %}>
+                            <label class="form-check-label" for="is_featured">
+                                <i class="fas fa-star text-warning"></i> Projeto em destaque
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-tag"></i> Categoria</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <select class="form-select" id="category_id" name="category_id">
+                            <option value="">Selecionar categoria</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" 
+                                    {% if project and project.category_id == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-tags"></i> Tags</h5>
+                </div>
+                <div class="card-body">
+                    {% if tags %}
+                    <div class="row">
+                        {% for tag in tags %}
+                        <div class="col-md-6 mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       id="tag_{{ tag.id }}" name="tags" value="{{ tag.id }}"
+                                       {% if project and tag.id in project_tag_ids %}checked{% endif %}>
+                                <label class="form-check-label" for="tag_{{ tag.id }}">
+                                    {{ tag.name }}
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted small">Nenhuma tag disponível. Crie tags no sistema.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-image"></i> Imagem</h5>
+                </div>
+                <div class="card-body">
+                    {% if project and project.image_url %}
+                    <div class="mb-3">
+                        <img src="{{ project.image_url }}" alt="Imagem atual" 
+                             class="img-fluid rounded" id="current-image">
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <input type="file" class="form-control" id="image" name="image" 
+                               accept="image/*" onchange="previewImage(this, 'image-preview')">
+                        <div class="form-text">JPG, PNG, GIF até 16MB</div>
+                    </div>
+                    
+                    <img id="image-preview" class="img-fluid rounded mt-2" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Projeto
+                </button>
+                <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                {% if project %}
+                <button type="button" class="btn btn-outline-danger ms-auto" 
+                        onclick="if(confirm('Tem certeza que deseja excluir este projeto?')) { document.getElementById('delete-form').submit(); }">
+                    <i class="fas fa-trash"></i> Excluir Projeto
+                </button>
+                <form id="delete-form" action="{{ url_for('admin_delete_project', project_id=project.id) }}" 
+                      method="POST" style="display: none;"></form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

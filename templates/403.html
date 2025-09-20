@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Acesso Negado - Pedro Odake{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <i class="fas fa-ban text-warning fa-4x mb-3"></i>
+                <h3 class="card-title text-warning">Acesso Negado</h3>
+                <p class="card-text">
+                    Você não tem permissão para acessar esta página.
+                </p>
+                <div class="d-flex gap-2 justify-content-center">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Ir para Início
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('replit_auth.login') }}" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Fazer Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Pedro Odake{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard Administrativo</h1>
+    <div>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+            <i class="fas fa-eye"></i> Ver Site
+        </a>
+        <a href="{{ url_for('admin_new_project') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Novo Projeto
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">{{ total_projects }}</h3>
+                        <p class="mb-0">Total de Projetos</p>
+                    </div>
+                    <i class="fas fa-folder-open stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stat-card text-white" style="background: linear-gradient(135deg, #28a745, #20c997);">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">{{ published_projects }}</h3>
+                        <p class="mb-0">Publicados</p>
+                    </div>
+                    <i class="fas fa-check-circle stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stat-card text-white" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">{{ draft_projects }}</h3>
+                        <p class="mb-0">Rascunhos</p>
+                    </div>
+                    <i class="fas fa-edit stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stat-card text-white" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">{{ total_users }}</h3>
+                        <p class="mb-0">Usuários</p>
+                    </div>
+                    <i class="fas fa-users stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Engagement Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                <h2 class="text-danger">{{ total_likes }}</h2>
+                <p class="text-muted mb-0">Total de Curtidas</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                <h2 class="text-info">{{ total_comments }}</h2>
+                <p class="text-muted mb-0">Total de Comentários</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Projects -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-clock"></i> Projetos Recentes</h5>
+                    <a href="{{ url_for('admin_projects') }}" class="btn btn-sm btn-outline-primary">
+                        Ver Todos
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if recent_projects %}
+                <div class="list-group list-group-flush">
+                    {% for project in recent_projects %}
+                    <div class="list-group-item d-flex justify-content-between align-items-start border-0 px-0">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">{{ project.title }}</div>
+                            <small class="text-muted">{{ project.created_at.strftime('%d/%m/%Y às %H:%M') }}</small>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <span class="badge {% if project.status.value == 'published' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {% if project.status.value == 'published' %}Publicado{% else %}Rascunho{% endif %}
+                            </span>
+                            <small class="text-muted">
+                                <i class="fas fa-heart text-danger"></i> {{ project.likes_count }}
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-folder-open fa-3x mb-2"></i>
+                    <p>Nenhum projeto ainda.</p>
+                    <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Criar Projeto
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Comments -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-comments"></i> Comentários Recentes</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_comments %}
+                <div class="list-group list-group-flush">
+                    {% for comment in recent_comments %}
+                    <div class="list-group-item border-0 px-0">
+                        <div class="d-flex align-items-start">
+                            {% if comment.user.profile_image_url %}
+                            <img src="{{ comment.user.profile_image_url }}" alt="Avatar" 
+                                 width="32" height="32" class="rounded-circle me-2">
+                            {% else %}
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                 style="width: 32px; height: 32px;">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">{{ comment.user.first_name or 'Usuário' }}</div>
+                                <div class="text-muted small">
+                                    em <a href="{{ url_for('project_detail', project_id=comment.project.id) }}" 
+                                          class="text-decoration-none">{{ comment.project.title }}</a>
+                                </div>
+                                <p class="mb-1 small">{{ comment.content[:80] }}{% if comment.content|length > 80 %}...{% endif %}</p>
+                                <small class="text-muted">{{ comment.created_at.strftime('%d/%m/%Y às %H:%M') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-comments fa-3x mb-2"></i>
+                    <p>Nenhum comentário ainda.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tools"></i> Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="d-grid">
+                            <a href="{{ url_for('admin_new_project') }}" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Novo Projeto
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-grid">
+                            <a href="{{ url_for('admin_projects') }}" class="btn btn-primary">
+                                <i class="fas fa-folder-open"></i> Gerenciar Projetos
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-grid">
+                            <a href="{{ url_for('about') }}" class="btn btn-info">
+                                <i class="fas fa-user-circle"></i> Editar Sobre
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-grid">
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-eye"></i> Ver Site
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

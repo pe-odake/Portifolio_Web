@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Início - Pedro Odake{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="jumbotron bg-primary text-white p-5 rounded">
+            <h1 class="display-4">Bem-vindo, {{ current_user.first_name or 'Visitante' }}! 👋</h1>
+            <p class="lead">
+                Explore meus projetos, deixe curtidas e comentários. 
+                Vamos construir uma comunidade de desenvolvedores juntos!
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Projects -->
+{% if featured_projects %}
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-star text-warning"></i> Projetos em Destaque</h2>
+        <a href="{{ url_for('projects') }}" class="btn btn-outline-primary">Ver Todos</a>
+    </div>
+    
+    <div class="row g-4">
+        {% for project in featured_projects %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card project-card h-100 border-0 shadow-sm">
+                {% if project.image_url %}
+                <img src="{{ project.image_url }}" class="card-img-top" alt="{{ project.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        {% if project.category %}
+                        <span class="badge" style="background-color: {{ project.category.color }}">
+                            {{ project.category.name }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="card-text">{{ project.description[:100] }}{% if project.description|length > 100 %}...{% endif %}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-heart text-danger"></i> {{ project.likes_count }}
+                            <i class="fas fa-comments text-info ms-2"></i> {{ project.comments_count }}
+                            <i class="fas fa-eye text-secondary ms-2"></i> {{ project.views }}
+                        </small>
+                        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-sm btn-primary">
+                            Ver Projeto
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Latest Projects -->
+{% if latest_projects %}
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-clock text-primary"></i> Últimos Projetos</h2>
+        <a href="{{ url_for('projects') }}" class="btn btn-outline-primary">Ver Todos</a>
+    </div>
+    
+    <div class="row g-4">
+        {% for project in latest_projects %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card project-card h-100 border-0 shadow-sm">
+                {% if project.image_url %}
+                <img src="{{ project.image_url }}" class="card-img-top" alt="{{ project.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        {% if project.category %}
+                        <span class="badge" style="background-color: {{ project.category.color }}">
+                            {{ project.category.name }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="card-text">{{ project.description[:100] }}{% if project.description|length > 100 %}...{% endif %}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-heart text-danger"></i> {{ project.likes_count }}
+                            <i class="fas fa-comments text-info ms-2"></i> {{ project.comments_count }}
+                            <span class="ms-2">{{ project.created_at.strftime('%d/%m/%Y') }}</span>
+                        </small>
+                        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-sm btn-primary">
+                            Ver Projeto
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Popular Projects -->
+{% if popular_projects %}
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-fire text-danger"></i> Projetos Populares</h2>
+        <a href="{{ url_for('projects') }}" class="btn btn-outline-primary">Ver Todos</a>
+    </div>
+    
+    <div class="row g-4">
+        {% for project in popular_projects %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card project-card h-100 border-0 shadow-sm">
+                {% if project.image_url %}
+                <img src="{{ project.image_url }}" class="card-img-top" alt="{{ project.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        {% if project.category %}
+                        <span class="badge" style="background-color: {{ project.category.color }}">
+                            {{ project.category.name }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="card-text">{{ project.description[:100] }}{% if project.description|length > 100 %}...{% endif %}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-heart text-danger"></i> {{ project.likes_count }}
+                            <i class="fas fa-comments text-info ms-2"></i> {{ project.comments_count }}
+                        </small>
+                        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-sm btn-primary">
+                            Ver Projeto
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Categories -->
+{% if categories %}
+<section class="mb-5">
+    <h2 class="mb-4"><i class="fas fa-tags text-success"></i> Categorias</h2>
+    <div class="d-flex flex-wrap gap-2">
+        {% for category in categories %}
+        <a href="{{ url_for('projects', category=category.id) }}" 
+           class="badge text-decoration-none fs-6 p-2" 
+           style="background-color: {{ category.color }}; color: white;">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Empty State -->
+{% if not featured_projects and not latest_projects %}
+<div class="text-center py-5">
+    <i class="fas fa-folder-open fa-5x text-muted mb-3"></i>
+    <h3 class="text-muted">Nenhum projeto ainda</h3>
+    <p class="text-muted">Os projetos aparecerão aqui quando forem publicados.</p>
+    {% if current_user.is_authenticated and (current_user.is_admin or current_user.is_owner) %}
+    <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Adicionar Primeiro Projeto
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

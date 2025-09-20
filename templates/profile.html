@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Perfil - Pedro Odake{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- User Info Section -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if current_user.profile_image_url %}
+                <img src="{{ current_user.profile_image_url }}" alt="Avatar" 
+                     class="img-fluid rounded-circle mb-3 shadow" 
+                     style="max-width: 150px;">
+                {% else %}
+                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                     style="width: 150px; height: 150px;">
+                    <i class="fas fa-user fa-4x text-white"></i>
+                </div>
+                {% endif %}
+                
+                <h4>{{ current_user.first_name or 'Usuário' }} {{ current_user.last_name or '' }}</h4>
+                {% if current_user.email %}
+                <p class="text-muted mb-3">{{ current_user.email }}</p>
+                {% endif %}
+                
+                {% if current_user.is_owner %}
+                <span class="badge bg-warning fs-6 p-2 mb-3">
+                    <i class="fas fa-crown"></i> Proprietário
+                </span>
+                {% elif current_user.is_admin %}
+                <span class="badge bg-success fs-6 p-2 mb-3">
+                    <i class="fas fa-shield-alt"></i> Administrador
+                </span>
+                {% else %}
+                <span class="badge bg-primary fs-6 p-2 mb-3">
+                    <i class="fas fa-user"></i> Visitante
+                </span>
+                {% endif %}
+                
+                <div class="row text-center mt-4">
+                    <div class="col-4">
+                        <div class="fs-4 text-primary">{{ user_projects|length }}</div>
+                        <small class="text-muted">Projetos</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fs-4 text-success">{{ user_comments }}</div>
+                        <small class="text-muted">Comentários</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fs-4 text-danger">{{ user_likes }}</div>
+                        <small class="text-muted">Curtidas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Actions -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5><i class="fas fa-cog"></i> Configurações</h5>
+                <div class="d-grid gap-2">
+                    {% if current_user.is_admin or current_user.is_owner %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">
+                        <i class="fas fa-tachometer-alt"></i> Painel Admin
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('replit_auth.logout') }}" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Activity -->
+    <div class="col-lg-8">
+        <!-- My Projects Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-folder-open"></i> Meus Projetos</h5>
+                    {% if current_user.is_admin or current_user.is_owner %}
+                    <a href="{{ url_for('admin_new_project') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> Novo Projeto
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                {% if user_projects %}
+                <div class="row g-3">
+                    {% for project in user_projects %}
+                    <div class="col-md-6">
+                        <div class="card border">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-1">{{ project.title }}</h6>
+                                    <span class="badge {% if project.status.value == 'published' %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if project.status.value == 'published' %}Publicado{% else %}Rascunho{% endif %}
+                                    </span>
+                                </div>
+                                <p class="card-text text-muted small">{{ project.description[:80] }}{% if project.description|length > 80 %}...{% endif %}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-heart text-danger"></i> {{ project.likes_count }}
+                                        <i class="fas fa-comments text-info ms-2"></i> {{ project.comments_count }}
+                                    </small>
+                                    <div class="btn-group btn-group-sm">
+                                        {% if project.status.value == 'published' %}
+                                        <a href="{{ url_for('project_detail', project_id=project.id) }}" 
+                                           class="btn btn-outline-primary btn-sm">Ver</a>
+                                        {% endif %}
+                                        {% if current_user.is_admin or current_user.is_owner %}
+                                        <a href="{{ url_for('admin_edit_project', project_id=project.id) }}" 
+                                           class="btn btn-outline-secondary btn-sm">Editar</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-folder-open fa-3x mb-3"></i>
+                    <p>Você ainda não tem projetos.</p>
+                    {% if current_user.is_admin or current_user.is_owner %}
+                    <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Criar Primeiro Projeto
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Activity Summary -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Resumo da Atividade</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-folder fa-2x text-primary mb-2"></i>
+                                <h3 class="text-primary">{{ user_projects|length }}</h3>
+                                <p class="text-muted mb-0">Projetos Criados</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-comments fa-2x text-success mb-2"></i>
+                                <h3 class="text-success">{{ user_comments }}</h3>
+                                <p class="text-muted mb-0">Comentários Feitos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                <h3 class="text-danger">{{ user_likes }}</h3>
+                                <p class="text-muted mb-0">Curtidas Dadas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body text-center">
+                                <i class="fas fa-calendar-alt fa-2x text-info mb-2"></i>
+                                <h3 class="text-info">{{ current_user.created_at.strftime('%d/%m/%Y') if current_user.created_at else 'N/A' }}</h3>
+                                <p class="text-muted mb-0">Membro Desde</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Bem-vindo - Pedro Odake Portfólio{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">Olá, eu sou Pedro Odake! 👋</h1>
+                <p class="lead">
+                    Estudante apaixonado por tecnologia e desenvolvimento de sistemas no SENAI Morvan Figueiredo. 
+                    Transformo ideias inovadoras em soluções funcionais.
+                </p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="{{ url_for('replit_auth.login') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Entrar para Interagir
+                    </a>
+                    <a href="{{ url_for('projects') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-folder-open"></i> Ver Projetos
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="profile-image-container">
+                    <img src="https://github.com/pe-odake.png" alt="Pedro Odake" 
+                         class="img-fluid rounded-circle shadow-lg" 
+                         style="max-width: 300px; width: 100%;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technologies Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2>🚀 Principais Tecnologias</h2>
+            <p class="text-muted">Ferramentas e linguagens que domino</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fab fa-python fa-3x text-primary mb-3"></i>
+                        <h5>Python</h5>
+                        <p class="card-text text-muted">Django, FastAPI, Flask</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fab fa-js-square fa-3x text-warning mb-3"></i>
+                        <h5>JavaScript</h5>
+                        <p class="card-text text-muted">Frontend & Backend</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fab fa-html5 fa-3x text-danger mb-3"></i>
+                        <h5>HTML5 & CSS3</h5>
+                        <p class="card-text text-muted">Interface responsiva</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-gamepad fa-3x text-success mb-3"></i>
+                        <h5>Pygame</h5>
+                        <p class="card-text text-muted">Desenvolvimento de jogos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects Preview -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2>✨ Projetos em Destaque</h2>
+            <p class="text-muted">Alguns dos meus trabalhos mais recentes</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Sample project cards -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">Django Pro</h5>
+                            <span class="badge bg-primary">Python</span>
+                        </div>
+                        <p class="card-text">Demonstração do processo completo de deploy de aplicações Django.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-heart text-danger"></i> 0 curtidas
+                            </small>
+                            <a href="{{ url_for('replit_auth.login') }}" class="btn btn-sm btn-outline-primary">
+                                Ver Projeto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">Portfólio Web</h5>
+                            <span class="badge bg-warning">HTML/CSS</span>
+                        </div>
+                        <p class="card-text">Portfólio responsivo mostrando habilidades em design front-end.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-heart text-danger"></i> 0 curtidas
+                            </small>
+                            <a href="{{ url_for('replit_auth.login') }}" class="btn btn-sm btn-outline-primary">
+                                Ver Projeto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">Soul Redemption</h5>
+                            <span class="badge bg-success">Pygame</span>
+                        </div>
+                        <p class="card-text">Jogo desenvolvido com Pygame explorando conceitos de game design.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-heart text-danger"></i> 0 curtidas
+                            </small>
+                            <a href="{{ url_for('replit_auth.login') }}" class="btn btn-sm btn-outline-primary">
+                                Ver Projeto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('projects') }}" class="btn btn-primary btn-lg">
+                Ver Todos os Projetos
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2>Pronto para Explorar?</h2>
+                <p class="lead text-muted">
+                    Entre para curtir projetos, deixar comentários e se conectar comigo!
+                </p>
+                <a href="{{ url_for('replit_auth.login') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-rocket"></i> Começar Agora
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Erro de Autenticação - Pedro Odake{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle text-danger fa-4x mb-3"></i>
+                <h3 class="card-title text-danger">Erro de Autenticação</h3>
+                <p class="card-text">
+                    Ocorreu um problema durante o processo de autenticação. 
+                    Por favor, tente novamente.
+                </p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="{{ url_for('replit_auth.login') }}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Tentar Novamente
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home"></i> Ir para Início
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

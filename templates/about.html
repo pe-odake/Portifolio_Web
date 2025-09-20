@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Sobre - Pedro Odake{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        {% if about %}
+        <!-- Profile Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        {% if about.profile_image %}
+                        <img src="{{ about.profile_image }}" alt="{{ about.name }}" 
+                             class="img-fluid rounded-circle mb-3 shadow" 
+                             style="max-width: 200px;">
+                        {% else %}
+                        <img src="https://github.com/pe-odake.png" alt="Pedro Odake" 
+                             class="img-fluid rounded-circle mb-3 shadow" 
+                             style="max-width: 200px;">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h1>{{ about.name or 'Pedro Odake' }}</h1>
+                        {% if about.title %}
+                        <h4 class="text-primary mb-3">{{ about.title }}</h4>
+                        {% else %}
+                        <h4 class="text-primary mb-3">Desenvolvedor & Estudante de Tecnologia</h4>
+                        {% endif %}
+                        
+                        {% if about.location %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt"></i> {{ about.location }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if about.email %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-envelope"></i> 
+                            <a href="mailto:{{ about.email }}">{{ about.email }}</a>
+                        </p>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2 mt-3">
+                            {% if about.github_url %}
+                            <a href="{{ about.github_url }}" target="_blank" class="btn btn-dark btn-sm">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            {% else %}
+                            <a href="https://github.com/pe-odake" target="_blank" class="btn btn-dark btn-sm">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            {% endif %}
+                            
+                            {% if about.linkedin_url %}
+                            <a href="{{ about.linkedin_url }}" target="_blank" class="btn btn-primary btn-sm">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                            {% endif %}
+                            
+                            {% if about.resume_url %}
+                            <a href="{{ about.resume_url }}" target="_blank" class="btn btn-success btn-sm">
+                                <i class="fas fa-download"></i> Currículo
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bio Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3><i class="fas fa-user-circle"></i> Sobre Mim</h3>
+                {% if about.bio %}
+                <div class="content">
+                    {{ about.bio|safe }}
+                </div>
+                {% else %}
+                <p>
+                    Olá! Sou Pedro Odake, um estudante apaixonado por tecnologia e desenvolvimento de sistemas 
+                    no SENAI Morvan Figueiredo. Minha jornada no mundo da programação é impulsionada pela 
+                    curiosidade e pelo desejo de transformar ideias inovadoras em soluções funcionais.
+                </p>
+                <p>
+                    Adoro explorar novas ferramentas e linguagens, sempre buscando aprimorar minhas habilidades 
+                    e construir projetos que realmente façam a diferença. Seja bem-vindo(a) ao meu espaço digital!
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% else %}
+        <!-- Default About Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="https://github.com/pe-odake.png" alt="Pedro Odake" 
+                             class="img-fluid rounded-circle mb-3 shadow" 
+                             style="max-width: 200px;">
+                    </div>
+                    <div class="col-md-8">
+                        <h1>Pedro Odake</h1>
+                        <h4 class="text-primary mb-3">Desenvolvedor & Estudante de Tecnologia</h4>
+                        
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="https://github.com/pe-odake" target="_blank" class="btn btn-dark btn-sm">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="https://linkedin.com/in/pedro-odake" target="_blank" class="btn btn-primary btn-sm">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3><i class="fas fa-user-circle"></i> Sobre Mim</h3>
+                <p>
+                    Olá! Sou Pedro Odake, um estudante apaixonado por tecnologia e desenvolvimento de sistemas 
+                    no SENAI Morvan Figueiredo. Minha jornada no mundo da programação é impulsionada pela 
+                    curiosidade e pelo desejo de transformar ideias inovadoras em soluções funcionais.
+                </p>
+                <p>
+                    Adoro explorar novas ferramentas e linguagens, sempre buscando aprimorar minhas habilidades 
+                    e construir projetos que realmente façam a diferença. Seja bem-vindo(a) ao meu espaço digital!
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Skills Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5><i class="fas fa-code"></i> Principais Habilidades</h5>
+                {% if about and about.skills %}
+                <!-- Parse skills from JSON if available -->
+                <div class="d-flex flex-wrap gap-2">
+                    <!-- Skills will be populated from database -->
+                    <span class="badge bg-primary fs-6 p-2">Python</span>
+                    <span class="badge bg-warning fs-6 p-2">JavaScript</span>
+                    <span class="badge bg-danger fs-6 p-2">HTML5</span>
+                    <span class="badge bg-info fs-6 p-2">CSS3</span>
+                    <span class="badge bg-success fs-6 p-2">Django</span>
+                    <span class="badge bg-dark fs-6 p-2">FastAPI</span>
+                    <span class="badge bg-secondary fs-6 p-2">Flask</span>
+                </div>
+                {% else %}
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-primary fs-6 p-2">Python</span>
+                    <span class="badge bg-warning fs-6 p-2">JavaScript</span>
+                    <span class="badge bg-danger fs-6 p-2">HTML5</span>
+                    <span class="badge bg-info fs-6 p-2">CSS3</span>
+                    <span class="badge bg-success fs-6 p-2">Django</span>
+                    <span class="badge bg-dark fs-6 p-2">FastAPI</span>
+                    <span class="badge bg-secondary fs-6 p-2">Flask</span>
+                    <span class="badge bg-warning fs-6 p-2">Pygame</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Stats Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5><i class="fas fa-chart-bar"></i> Estatísticas</h5>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="fs-4 text-primary">{{ recent_projects|length if recent_projects else '0' }}</div>
+                        <small class="text-muted">Projetos</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="fs-4 text-success">33</div>
+                        <small class="text-muted">Seguidores GitHub</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Section -->
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="fas fa-envelope"></i> Entre em Contato</h5>
+                <p class="text-muted">
+                    Interessado em colaborar ou tem alguma pergunta? 
+                    Ficarei feliz em conversar!
+                </p>
+                <div class="d-grid gap-2">
+                    <a href="https://github.com/pe-odake" target="_blank" class="btn btn-dark">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                    <a href="https://linkedin.com/in/pedro-odake" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </div>
+                
+                {% if current_user.is_authenticated and (current_user.is_admin or current_user.is_owner) %}
+                <hr>
+                <div class="d-grid">
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-edit"></i> Editar Página Sobre
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

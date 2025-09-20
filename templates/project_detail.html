@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - Pedro Odake{% endblock %}
+
+{% block content %}
+<!-- Project Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Início</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('projects') }}">Projetos</a></li>
+                <li class="breadcrumb-item active">{{ project.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Project Image -->
+        {% if project.image_url %}
+        <div class="mb-4">
+            <img src="{{ project.image_url }}" class="img-fluid rounded shadow" alt="{{ project.title }}">
+        </div>
+        {% endif %}
+        
+        <!-- Project Title and Meta -->
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h1>{{ project.title }}</h1>
+                <div class="d-flex align-items-center text-muted mb-3">
+                    <small>
+                        <i class="fas fa-calendar-alt"></i> {{ project.created_at.strftime('%d/%m/%Y') }}
+                        <i class="fas fa-eye ms-3"></i> {{ project.views }} visualizações
+                        {% if project.category %}
+                        <span class="badge ms-3" style="background-color: {{ project.category.color }}">
+                            {{ project.category.name }}
+                        </span>
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+            {% if current_user.is_authenticated and (current_user.is_admin or current_user.is_owner) %}
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('admin_edit_project', project_id=project.id) }}">
+                        <i class="fas fa-edit"></i> Editar
+                    </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="if(confirm('Tem certeza?')) { document.getElementById('delete-form').submit(); }">
+                        <i class="fas fa-trash"></i> Excluir
+                    </a></li>
+                </ul>
+            </div>
+            <form id="delete-form" action="{{ url_for('admin_delete_project', project_id=project.id) }}" method="POST" style="display: none;"></form>
+            {% endif %}
+        </div>
+        
+        <!-- Project Description -->
+        {% if project.description %}
+        <div class="mb-4">
+            <h4>Sobre o Projeto</h4>
+            <p class="lead">{{ project.description }}</p>
+        </div>
+        {% endif %}
+        
+        <!-- Project Content -->
+        {% if project.content %}
+        <div class="mb-4">
+            <div class="content">
+                {{ project.content|safe }}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Project Links -->
+        {% if project.github_url or project.demo_url %}
+        <div class="mb-4">
+            <h4>Links do Projeto</h4>
+            <div class="d-flex gap-2">
+                {% if project.github_url %}
+                <a href="{{ project.github_url }}" target="_blank" class="btn btn-dark">
+                    <i class="fab fa-github"></i> Código Fonte
+                </a>
+                {% endif %}
+                {% if project.demo_url %}
+                <a href="{{ project.demo_url }}" target="_blank" class="btn btn-success">
+                    <i class="fas fa-external-link-alt"></i> Ver Demo
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Tags -->
+        {% if project_tags %}
+        <div class="mb-4">
+            <h4>Tecnologias</h4>
+            <div class="d-flex flex-wrap gap-2">
+                {% for tag in project_tags %}
+                <span class="badge bg-secondary fs-6 p-2">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Comments Section -->
+        <div class="mb-4">
+            <h4><i class="fas fa-comments"></i> Comentários ({{ project.comments_count }})</h4>
+            
+            <!-- Add Comment Form -->
+            {% if current_user.is_authenticated %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_comment', project_id=project.id) }}">
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" rows="3" 
+                                      placeholder="Deixe seu comentário..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Enviar Comentário
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <a href="{{ url_for('replit_auth.login') }}" class="alert-link">Faça login</a> 
+                para deixar comentários.
+            </div>
+            {% endif %}
+            
+            <!-- Comments List -->
+            {% if comments %}
+            <div class="comments">
+                {% for comment in comments %}
+                <div class="comment card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex align-items-center">
+                                {% if comment.user.profile_image_url %}
+                                <img src="{{ comment.user.profile_image_url }}" alt="Avatar" 
+                                     width="32" height="32" class="rounded-circle me-2">
+                                {% else %}
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                     style="width: 32px; height: 32px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <span class="comment-author">{{ comment.user.first_name or 'Usuário' }}</span>
+                                    <small class="text-muted d-block">{{ comment.created_at.strftime('%d/%m/%Y às %H:%M') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <p class="mb-0">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">
+                <i class="fas fa-comments fa-2x mb-2"></i>
+                <p>Ainda não há comentários. Seja o primeiro a comentar!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Like Button and Stats -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                {% if current_user.is_authenticated %}
+                <button class="btn-like btn btn-lg mb-3" data-project-id="{{ project.id }}">
+                    <i class="{% if user_liked %}fas{% else %}far{% endif %} fa-heart fa-2x"></i>
+                    <div class="like-count">{{ project.likes_count }}</div>
+                    <small class="d-block">curtidas</small>
+                </button>
+                {% else %}
+                <div class="text-muted mb-3">
+                    <i class="fas fa-heart fa-2x text-danger"></i>
+                    <div class="fs-4">{{ project.likes_count }}</div>
+                    <small>curtidas</small>
+                    <div class="mt-2">
+                        <a href="{{ url_for('replit_auth.login') }}" class="btn btn-sm btn-outline-primary">
+                            Entre para curtir
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="fs-5">{{ project.comments_count }}</div>
+                        <small class="text-muted">comentários</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="fs-5">{{ project.views }}</div>
+                        <small class="text-muted">visualizações</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Share -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-share-alt"></i> Compartilhar</h5>
+                <div class="d-grid gap-2">
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url }}" 
+                       target="_blank" class="btn btn-linkedin">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                    <button class="btn btn-secondary" onclick="copyToClipboard('{{ request.url }}')">
+                        <i class="fas fa-link"></i> Copiar Link
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Similar Projects -->
+        {% if similar_projects %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-lightbulb"></i> Projetos Similares</h5>
+                {% for similar in similar_projects %}
+                <div class="d-flex align-items-center mb-3">
+                    {% if similar.image_url %}
+                    <img src="{{ similar.image_url }}" alt="{{ similar.title }}" 
+                         class="rounded me-3" style="width: 60px; height: 40px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" 
+                         style="width: 60px; height: 40px;">
+                        <i class="fas fa-project-diagram text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="flex-grow-1">
+                        <a href="{{ url_for('project_detail', project_id=similar.id) }}" 
+                           class="text-decoration-none">
+                            <div class="fw-medium">{{ similar.title }}</div>
+                            <small class="text-muted">{{ similar.likes_count }} curtidas</small>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        showToast('Link copiado para a área de transferência!', 'success');
+    }, function(err) {
+        console.error('Erro ao copiar: ', err);
+    });
+}
+</script>
+{% endblock %}
